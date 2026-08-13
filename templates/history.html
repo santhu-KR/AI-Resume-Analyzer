@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Analysis History</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <style>
+
+        body {
+            background: #f4f7fb;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 1100px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 18px;
+        }
+
+        .score {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .skill {
+            display: inline-block;
+            background: #d1e7dd;
+            color: #0f5132;
+            padding: 5px 10px;
+            margin: 2px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+
+        .empty {
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .back-btn {
+            border-radius: 10px;
+            padding: 10px 20px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container py-5">
+
+
+    <!-- Header -->
+
+    <div class="text-center mb-5">
+
+        <h1 class="fw-bold">
+
+            📜 Analysis History
+
+        </h1>
+
+        <p class="text-muted">
+
+            View your previous resume analyses
+
+        </p>
+
+    </div>
+
+
+    {% if analyses %}
+
+
+        {% for analysis in analyses %}
+
+
+            <div class="card shadow p-4 mb-4">
+
+
+                <div class="row">
+
+
+                    <!-- Resume -->
+
+                    <div class="col-md-4">
+
+                        <h5>
+
+                            📄 Resume
+
+                        </h5>
+
+                        <p>
+
+                            {{ analysis["resume_filename"] }}
+
+                        </p>
+
+                        <small class="text-muted">
+
+                            {{ analysis["created_at"] }}
+
+                        </small>
+
+                    </div>
+
+
+                    <!-- ATS Score -->
+
+                    <div class="col-md-4">
+
+                        <h5>
+
+                            🎯 ATS Score
+
+                        </h5>
+
+                        <div class="score">
+
+                            {{ analysis["ats_score"] }}%
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Breakdown -->
+
+                    <div class="col-md-4">
+
+                        <h5>
+
+                            📊 Score Breakdown
+
+                        </h5>
+
+                        <p>
+
+                            Similarity:
+                            <strong>
+                                {{ analysis["similarity_score"] }}%
+                            </strong>
+
+                        </p>
+
+                        <p>
+
+                            Skills:
+                            <strong>
+                                {{ analysis["skill_score"] }}%
+                            </strong>
+
+                        </p>
+
+                        <p>
+
+                            Quality:
+                            <strong>
+                                {{ analysis["resume_quality"] }}%
+                            </strong>
+
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+                <hr>
+
+
+                <!-- Matched Skills -->
+
+                <h6>
+
+                    ✅ Matched Skills
+
+                </h6>
+
+
+                <div class="mb-3">
+
+                    {% if analysis["matched_skills"] %}
+
+                        {% for skill in analysis["matched_skills"].split(", ") %}
+
+                            <span class="skill">
+
+                                {{ skill }}
+
+                            </span>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <span class="text-muted">
+
+                            No matched skills
+
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Missing Skills -->
+
+                <h6>
+
+                    ⚠️ Missing Skills
+
+                </h6>
+
+
+                <p class="text-muted">
+
+                    {{ analysis["missing_skills"] or "None" }}
+
+                </p>
+
+
+            </div>
+
+
+        {% endfor %}
+
+
+    {% else %}
+
+
+        <div class="card shadow empty">
+
+            <h2>
+
+                📭 No Analysis History
+
+            </h2>
+
+            <p class="text-muted">
+
+                Analyze your first resume to see
+                the result here.
+
+            </p>
+
+        </div>
+
+
+    {% endif %}
+
+
+    <!-- Buttons -->
+
+    <div class="text-center mt-4">
+
+        <a
+            href="/"
+            class="btn btn-primary back-btn">
+
+            ← Analyze Resume
+
+        </a>
+
+
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>
