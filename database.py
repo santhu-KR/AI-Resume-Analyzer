@@ -1,132 +1,93 @@
 import sqlite3
 
-
 DATABASE_NAME = "database.db"
 
 
 def get_connection():
-
-    connection = sqlite3.connect(
-        DATABASE_NAME
-    )
-
+    connection = sqlite3.connect(DATABASE_NAME)
     connection.row_factory = sqlite3.Row
-
     return connection
 
 
 def create_table():
-
     connection = get_connection()
-
     cursor = connection.cursor()
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS analyses (
-
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-            resume_filename TEXT NOT NULL,
-
+            visitor_id TEXT NOT NULL,
+            filename TEXT NOT NULL,
             job_description TEXT NOT NULL,
-
-            ats_score REAL,
-
+            score REAL,
             similarity_score REAL,
-
             skill_score REAL,
-
-            resume_quality REAL,
-
+            resume_quality TEXT,
             matched_skills TEXT,
-
             missing_skills TEXT,
-
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-
         )
     """)
 
     connection.commit()
-
     connection.close()
 
 
 def save_analysis(
-    resume_filename,
+    visitor_id,
+    filename,
     job_description,
-    ats_score,
+    score,
     similarity_score,
     skill_score,
     resume_quality,
     matched_skills,
     missing_skills
 ):
-
     connection = get_connection()
-
     cursor = connection.cursor()
 
     cursor.execute("""
         INSERT INTO analyses (
-
-            resume_filename,
+            visitor_id,
+            filename,
             job_description,
-            ats_score,
+            score,
             similarity_score,
             skill_score,
             resume_quality,
             matched_skills,
             missing_skills
-
         )
-
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
-
-        resume_filename,
-
+        visitor_id,
+        filename,
         job_description,
-
-        ats_score,
-
+        score,
         similarity_score,
-
         skill_score,
-
         resume_quality,
-
-        ", ".join(matched_skills),
-
-        ", ".join(missing_skills)
-
+        ", ".join(matched_skills) if isinstance(matched_skills, list) else matched_skills,
+        ", ".join(missing_skills) if isinstance(missing_skills, list) else missing_skills
     ))
 
     connection.commit()
-
     connection.close()
 
 
-def get_all_analyses():
-
+def get_user_analyses(visitor_id):
     connection = get_connection()
-
     cursor = connection.cursor()
 
     cursor.execute("""
         SELECT *
         FROM analyses
-        ORDER BY created_at DESC
-    """)
+        WHERE visitor_id = ?
+        ORDER BY id DESC
+    """, (visitor_id,))
 
     analyses = cursor.fetchall()
-
     connection.close()
 
     return analyses
-
-
-# Create database table
-# when this file is used.
-
-create_table()
